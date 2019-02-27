@@ -20,7 +20,7 @@ namespace Crawl.Views
             InitializeComponent();
 
             BindingContext = _viewModel;
-
+            //test
             // Set the flag for Mock on or off...
             UseMockDataSource.IsToggled = (MasterDataStore.GetDataStoreMockFlag() == DataStoreEnum.Mock);
             SetDataSource(UseMockDataSource.IsToggled);
