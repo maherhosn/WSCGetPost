@@ -149,6 +149,9 @@ namespace Crawl.Views
             {
                 // Call to the SQL DataStore and have it clear the tables.
                 SQLDataStore.Instance.InitializeDatabaseNewTables();
+
+                // Call to Mock DataStore and clear it
+                MockDataStore.Instance.InitializeDatabaseNewTables();
             }
         }
 
@@ -169,7 +172,10 @@ namespace Crawl.Views
                 // as the group to request.  1, 2, 3, 100 (All), or if not specified All
 
                 // 1. Take the value from ServerItemValue.Text, Convert to an ToInt32 and save it in a variable
+                var value = Convert.ToInt32(ServerItemValue.Text);
+
                 // 2. set myDataList = await ItemsController.Instance.GetItemsFromServer passing the variable
+                myDataList = await ItemsController.Instance.GetItemsFromServer(value);
 
                 if (myDataList != null && myDataList.Count > 0)
                 {
@@ -180,7 +186,8 @@ namespace Crawl.Views
                     {
                         // Add them line by one, use \n to force new line for output display.
                         // Build up the output string by adding formatted Item Output
-                        myOutput += "//implement call item formatter" + "\n";
+                       myOutput += item.FormatOutput() + "\n";
+
                     }
                 }
 
@@ -202,9 +209,10 @@ namespace Crawl.Views
 
             // will return shoes value 10 of speed.
             // Example  result = await ItemsController.Instance.GetItemsFromGame(1, 10, AttributeEnum.Speed, ItemLocationEnum.Feet, false, true);
-            //ItemsController.Instance.GetItemsFromGame(int number, int level, AttributeEnum attribute, ItemLocationEnum location, bool random, bool updateDataBase)
+            // ItemsController.Instance.GetItemsFromGame(int number, int level, AttributeEnum attribute, ItemLocationEnum location, bool random, bool updateDataBase)
 
             // Implement calling GetItemsFromGame into myDataList.  Remember to Await the call.
+            myDataList = await ItemsController.Instance.GetItemsFromGame(number, level, attribute, location, random, updateDataBase);
 
             if (myDataList != null && myDataList.Count > 0)
             {

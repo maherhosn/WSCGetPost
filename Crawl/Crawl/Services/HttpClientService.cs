@@ -34,7 +34,7 @@ namespace Crawl.Services
             }
         }
 
-    public static HttpClientService Instance
+        public static HttpClientService Instance
         {
             get
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Crawl.Models;
 using Crawl.ViewModels;
+using System.Diagnostics;
 
 namespace Crawl.Services
 {
@@ -124,42 +125,87 @@ namespace Crawl.Services
 
         public async Task<bool> InsertUpdateAsync_Item(Item data)
         {
-            // Implement
+
+            // Check to see if the item exist or it has been changed
+            var oldData = await GetAsync_Item(data.Id);
+
+            if ((oldData == null) || (oldData.Id != data.Id))
+            {
+                await AddAsync_Item(data);
+                return true;
+            }
+
+            // Compare it, if different update in the DB
+            var UpdateResult = await UpdateAsync_Item(data);
+
+            if (UpdateResult)
+            {
+                await AddAsync_Item(data);
+                return true;
+            }
+
+
 
             return false;
         }
 
         public async Task<bool> AddAsync_Item(Item data)
         {
-            // Implement
+            var result = await App.Database.InsertAsync(data);
+            if (result == 1)
+            {
+                return true;
+            }
 
             return false;
         }
 
         public async Task<bool> UpdateAsync_Item(Item data)
         {
-            // Implement
+            var result = await App.Database.UpdateAsync(data);
+            Debug.WriteLine("data base updated" + result); //for debugging
+            if (result == 1)
+            {
+                return true;
+            }
 
             return false;
         }
 
         public async Task<bool> DeleteAsync_Item(Item data)
         {
-            // Implement
+            var result = await App.Database.DeleteAsync(data);
+            if (result == 1)
+            {
+                return true;
+            }
 
             return false;
         }
 
         public async Task<Item> GetAsync_Item(string id)
         {
-            // Implement
-            return null;
+            //check if the value exists in the Database, if not return null
+            try
+            {
+                var result = await App.Database.GetAsync<Item>(id); return result;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+            /*var tempResult = await App.Database.GetAsync<Item>(id);
+
+            var result = new Item(tempResult);
+
+            return result;*/
         }
 
         public async Task<IEnumerable<Item>> GetAllAsync_Item(bool forceRefresh = false)
         {
-            // Implement
-            return null;
+            var tempResult = await App.Database.Table<Item>().ToListAsync();
+            return tempResult;
         }
         #endregion Item
 

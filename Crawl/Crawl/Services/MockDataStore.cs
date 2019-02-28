@@ -112,9 +112,31 @@ namespace Crawl.Services
 
         #region Item
         // Item
+
+        public List<Item> GetAllItems()
+        {
+            List<Item> myList = _itemDataset;
+            return myList;
+        }
         public async Task<bool> InsertUpdateAsync_Item(Item data)
         {
 
+            // Check to see if the item exist or has been updated
+            var oldData = await GetAsync_Item(data.Id);
+            if ((oldData == null) || (oldData.Id != data.Id))
+            {
+                //_itemDataset.Add(data);
+                await AddAsync_Item(data);
+                return true;
+            }
+
+            // Compare it, if different update in the DB
+            var UpdateResult = await UpdateAsync_Item(data);
+            if (UpdateResult)
+            {
+                await AddAsync_Item(data);
+                return true;
+            }
 
             return false;
         }
